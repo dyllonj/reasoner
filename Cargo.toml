@@ -1,0 +1,37 @@
+[package]
+name = "reasoner"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# Async runtime — Rust's futures are lazy (do nothing until polled).
+# Tokio provides the executor that actually drives them to completion.
+# "full" enables all features: multi-threaded runtime, IO, timers, sync primitives.
+tokio = { version = "1", features = ["full"] }
+
+# HTTP client — we use this to talk to the Claude API.
+# We're building the API client by hand (not using an SDK) so you understand
+# the raw HTTP protocol: headers, JSON bodies, streaming responses.
+reqwest = { version = "0.12", features = ["json", "stream"] }
+
+# Serialization — converts Rust structs <-> JSON.
+# serde provides the derive macros (#[derive(Serialize, Deserialize)])
+# serde_json provides the actual JSON parser/emitter.
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# CLI argument parsing — type-safe command line interface.
+# Derive-based: you define a struct, clap generates the parser.
+clap = { version = "4", features = ["derive"] }
+
+# Error handling — anyhow gives us a single Error type that wraps any error.
+# In application code (not libraries), this is the pragmatic choice.
+# For libraries you'd use thiserror for typed errors instead.
+anyhow = "1"
+
+# Async streaming — for processing Server-Sent Events (SSE) from the Claude API.
+# The Claude API streams tokens one at a time via SSE. We need to parse that stream.
+futures = "0.3"
+
+# Environment variables — loads .env files so you don't hardcode your API key.
+dotenvy = "0.15"
